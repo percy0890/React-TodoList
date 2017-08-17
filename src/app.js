@@ -5,15 +5,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 class TodoList extends React.Component{
 
-  // removeItem(id) {
-  //   console.log(id, this.props);
-  //   let arrayList = this.props.list;
-  //   console.log(arrayList,'arrayList....');
-  //   arrayList = arrayList.splice( id, 1 );
-  //   this.props.removeItem
-  // }
-
-
   render(){
     const todoStyle = {
       border : "2px solid palegoldenrod",
@@ -23,23 +14,19 @@ class TodoList extends React.Component{
       borderRadius : "5px"
     }
 
-    let displayList = [];
-    displayList = displayList.concat(this.props.list);
     return (
       <section>
         {
-          displayList.length > 0 ?
-            displayList.map((task, id) =>
-              <div style={todoStyle} className="row col-xs-12" key={id}>
-                <div className="col-xs-9">
-                  {task}
-                </div>
-                <button type="button" className="btn btn-danger col-xs-3" onClick={this.props.removeItem.bind(this, id)}>
-                  Remove
-                </button>
+          this.props.list.map((task, id) =>
+            <div style={todoStyle} className="row col-xs-12" key={id}>
+              <div className="col-xs-9">
+                {task}
               </div>
-            )
-          : null
+              <button type="button" className="btn btn-danger col-xs-3" onClick={() => this.props.removeItem(id)}>
+                Remove
+              </button>
+            </div>
+          )
         }
       </section>
     )
@@ -57,17 +44,20 @@ class App extends React.Component {
   }
 
   addList() {
-    let listItem = this.refs.inputValue
-    let newArrayList = this.state.list.concat(listItem.value);
-    // this.refs.inputValue = ''
-    this.setState({
-      list : newArrayList
+    let listItem = this.todoInput.value //this.refs.inputValue
+    // let newList = _.cloneDeep(this.state.list).slice(0);     // cloning the existing array
+    // newList.push(listItem);   // pushing the new element
 
-    })
+    //let newArrayList = this.state.list.concat(listItem.value);
+    this.setState({
+      list : [...this.state.list, listItem]
+    }, () => this.todoInput.value = "")
   }
 
   remove(id){
-    let updatedList = this.props.list.splice( id, 1 );
+    // let updatedList = this.props.list.splice( id, 1 );
+    let updatedList = this.state.list.slice(0);
+    updatedList.splice(id, 1);
     this.setState({
       list : updatedList
     })
@@ -96,14 +86,14 @@ class App extends React.Component {
         <h1 className="text-center">Todo List</h1>
         <div className="row col-xs-12" style={inputContainer}>
           <div className="col-xs-9">
-            <input type="text" className="form-control"  ref="inputValue"/>
+            <input type="text" className="form-control"  ref={(txt) => this.todoInput = txt}/>
           </div>
-          <button type="button" className="btn btn-primary col-xs-3" onClick={this.addList.bind(this)}>
+          <button type="button" className="btn btn-primary col-xs-3" onClick={() => this.addList()}>
             Add
           </button>
         </div>
         <div style={todoContainer}>
-          <TodoList list={this.state.list}  removeItem={this.remove}/>
+          <TodoList list={this.state.list}  removeItem={(id) => this.remove(id)}/>
         </div>
       </section>
     )

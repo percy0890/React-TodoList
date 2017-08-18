@@ -48,9 +48,9 @@ class App extends React.Component {
     // let newList = _.cloneDeep(this.state.list).slice(0);     // cloning the existing array
     // newList.push(listItem);   // pushing the new element
 
-    //let newArrayList = this.state.list.concat(listItem.value);
+    //let newArrayList = this.state.list.concat(listItem.value);  //changing the state directly- not recommended
     this.setState({
-      list : [...this.state.list, listItem]
+      list : [...this.state.list, listItem]     // always change state inside setState()
     }, () => this.todoInput.value = "")
   }
 
